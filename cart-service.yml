@@ -1,0 +1,80 @@
+spring:
+  application:
+    name: cart-service
+  datasource:
+    url: jdbc:h2:mem:products-cartdb
+    username: root
+    password: root
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+server:
+  port: 9001
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      type: b3
+    enabled: true
+    baggage:
+      enabled: true
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+info:
+  app:
+    name: cart-service
+    description: Manages user cart details
+    version: "1.0"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+      healthcheck:
+        enabled: true
+  instance:
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
+    prefer-ip-address: true
+
+application:
+  security:
+    jwt:
+      secret-key: "5367566B59703373367639792F423F4518482B4D6251655468576D5A71347437"
+
+kafka:
+  bootstrap-servers: "localhost:9092"
+  consumer-groupId: "cart-consumer"
